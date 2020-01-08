@@ -1,0 +1,60 @@
+name: act1
+on: push
+
+jobs:
+  job1st:
+    name: job1st
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: runmysh
+        run: |
+          env
+          date
+          pwd && ls -lh
+          echo '====='
+          pwd && ls -lh ..
+          echo '====='
+          pwd && ls -lh ../..
+          ./date.sh
+          mkdir /opt/test1
+
+      - name: prep install
+        run: |
+          #sudo apt install -y libxcb1-dev libxcb-xkb-dev libx11-xcb-dev libxcb-cursor-dev libxcb-render0-dev libxkbcommon-x11-dev libxkbcommon-dev libdbus-1-dev fonts-wqy-microhei fonts-wqy-zenhei
+          sudo apt remove -y libgc1c2
+      - name: build qtlt
+        env:
+          BINTRAY_APIKEY: ${{ secrets.BINTRAY_APIKEY }}
+        shell: bash
+        run: |
+          #./build-libgc-7.6.sh
+          #ldd ./gaosinit
+          go build -v -x -o gaosinit osinit.go 2>&1|grep -v packagefile
+          ./start.sh
+      - name: tail 1
+        run: ./taillog.sh
+      - name: tail 2
+        run: ./taillog.sh
+      - name: tail 3
+        run: ./taillog.sh
+      - name: tail 4
+        run: ./taillog.sh
+      - name: tail 5
+        run: ./taillog.sh
+      - name: tail 6
+        run: ./taillog.sh
+
+      - name: irc report
+        uses: rectalogic/notify-irc@v1
+        with:
+          #server: ${{ secrets.IRCSRV }}
+          #port: ${{ secrets.IRCPORT }}
+          tls: true
+          channel: "#vknuts"
+          nickname: gareport
+          message: ${{ github.repository }} finished
+
+
